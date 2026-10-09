@@ -1,0 +1,34 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gmCircleGradient" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stopColor="#09B5E5" />
+      <stop offset="35%" stopColor="#078CCB" />
+      <stop offset="70%" stopColor="#07579D" />
+      <stop offset="100%" stopColor="#031A3D" />
+    </linearGradient>
+    <linearGradient id="gmArrowGradient" x1="10%" y1="80%" x2="90%" y2="20%">
+      <stop offset="0%" stopColor="#078CCB" />
+      <stop offset="40%" stopColor="#09B5E5" />
+      <stop offset="100%" stopColor="#00C7FF" />
+    </linearGradient>
+    <linearGradient id="gmBar1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stopColor="#031A3D" />
+      <stop offset="100%" stopColor="#07579D" />
+    </linearGradient>
+    <linearGradient id="gmBar2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stopColor="#07579D" />
+      <stop offset="100%" stopColor="#078CCB" />
+    </linearGradient>
+    <linearGradient id="gmBar3" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stopColor="#078CCB" />
+      <stop offset="100%" stopColor="#09B5E5" />
+    </linearGradient>
+  </defs>
+  <path d="M 60,10 C 28.5,10 10,31.5 10,60 C 10,88.5 28.5,110 60,110 C 88.5,110 104,91.5 107,70 L 76,70 L 76,84 C 73,88 67.5,92 60,92 C 42.5,92 28,78 28,60 C 28,42 42.5,28 60,28 C 72.5,28 82,34.5 88,43.5 L 102.5,31 C 93,18 78,10 60,10 Z" fill="url(#gmCircleGradient)" />
+  <rect x="34" y="66" width="12" height="24" rx="2" fill="url(#gmBar1)" />
+  <rect x="50" y="54" width="12" height="36" rx="2" fill="url(#gmBar2)" />
+  <rect x="66" y="40" width="12" height="50" rx="2" fill="url(#gmBar3)" />
+  <path d="M 76,70 L 107,70 L 107,88 C 100,98 89,105 76,108 L 76,88 Z" fill="#031A3D" />
+  <path d="M 22,100 C 35,97 58,82 80,48 L 78,60 L 112,26 L 88,38 L 94,44 C 74,74 48,88 24,96 Z" fill="url(#gmArrowGradient)" />
+  <polygon points="112,26 88,38 96,46 112,26" fill="#09B5E5" />
+</svg>
