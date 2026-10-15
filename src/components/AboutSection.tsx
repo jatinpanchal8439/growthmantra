@@ -213,11 +213,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({
             {leadership.map((member, idx) => (
               <div key={idx} className="bg-white border border-[#DCEAF3] rounded-3xl overflow-hidden shadow-xs hover:shadow-lg transition-all p-6 space-y-4">
                 <div className="flex items-center gap-4">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#078CCB]"
-                  />
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#07579D] to-[#078CCB] text-white flex items-center justify-center font-display font-extrabold text-sm shadow-sm flex-shrink-0">
+                    {member.name.split(' ').map(n => n[0]).join('')}
+                  </div>
                   <div>
                     <h4 className="font-bold text-[#031A3D] text-base">
                       {member.name}

@@ -163,7 +163,8 @@ export type AppPage =
   | 'social-media' 
   | 'events-awards' 
   | 'roi-calculator' 
-  | 'command-center';
+  | 'command-center'
+  | 'privacy-policy';
 
 export interface ClientWebsite {
   id: string;

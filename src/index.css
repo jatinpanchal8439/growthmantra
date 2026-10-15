@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 @import "tailwindcss";
 
 @layer base {
@@ -5,6 +6,8 @@
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #F5FAFD;
     color: #475569;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   h1, h2, h3, .font-display {
@@ -12,34 +15,90 @@
   }
 }
 
+
 /* Brand Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #EAF5FB; }
+::-webkit-scrollbar-thumb { background: #DCEAF3; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #078CCB; }
+
+/* ===========================
+   LAUNCHVEDA / BANEGABRAND ANIMATIONS
+   =========================== */
+
+/* Frosted Glass Navbar */
+.navbar-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
-::-webkit-scrollbar-track {
-  background: #EAF5FB;
+/* Hero word cycling animation (BanegaBrand style) */
+@keyframes word-slide-in {
+  0% { opacity: 0; transform: translateY(60%); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #DCEAF3;
-  border-radius: 4px;
+@keyframes word-slide-out {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-60%); }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #078CCB;
+.word-cycle-container {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
 }
 
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.9; }
+.word-cycle-item {
+  display: block;
+  transition: all 0.7s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-.animate-pulse-subtle {
-  animation: pulse-subtle 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* Marquee animations */
+@keyframes marquee-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
+@keyframes marquee-slide-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide 28s linear infinite;
+}
+
+.marquee-track-slow {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide 45s linear infinite;
+}
+
+.marquee-track-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide-reverse 35s linear infinite;
+}
+
+.marquee-wrapper:hover .marquee-track,
+.marquee-wrapper:hover .marquee-track-slow,
+.marquee-wrapper:hover .marquee-track-reverse {
+  animation-play-state: paused;
+}
+
+/* Orbital SVG animation */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Fade / slide utilities */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -51,29 +110,246 @@
 }
 
 @keyframes slideInUp {
-  from { transform: translateY(100%); opacity: 0; }
+  from { transform: translateY(40px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.25s ease-out forwards;
+@keyframes slideInDown {
+  from { transform: translateY(-40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.animate-slide-left {
-  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
 }
 
-.animate-slide-up {
-  animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes float-up-down {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(7, 140, 203, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(7, 140, 203, 0.6); }
+}
+
+@keyframes counter-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes reveal-char {
+  from { opacity: 0; transform: translateY(100%) rotateX(-90deg); }
+  to { opacity: 1; transform: translateY(0) rotateX(0deg); }
+}
+
+/* Animation utility classes */
+.animate-fade-in { animation: fadeIn 0.25s ease-out forwards; }
+.animate-slide-left { animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-up { animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-down { animation: slideInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-pulse-subtle { animation: pulse-subtle 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-float { animation: float-up-down 4s ease-in-out infinite; }
+.animate-glow { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Staggered reveal for GSAP targets */
+.gsap-reveal { opacity: 0; transform: translateY(60px); }
+.gsap-reveal-left { opacity: 0; transform: translateX(-60px); }
+.gsap-reveal-right { opacity: 0; transform: translateX(60px); }
+.gsap-scale-in { opacity: 0; transform: scale(0.85); }
+
+/* Hero big text display */
+.hero-big-text {
+  font-size: clamp(52px, 8vw, 130px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+/* Gradient text utility */
+.brand-gradient-text {
+  background: linear-gradient(135deg, #07579D 0%, #078CCB 55%, #09B5E5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .brand-gradient {
   background: linear-gradient(135deg, #07579D 0%, #078CCB 55%, #09B5E5 100%);
 }
 
-.brand-gradient-text {
-  background: linear-gradient(135deg, #07579D 0%, #078CCB 55%, #09B5E5 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
+/* Dark glass card */
+.dark-glass-card {
+  background: rgba(15, 20, 40, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Horizontal scroll track */
+.h-scroll-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.h-scroll-track::-webkit-scrollbar { display: none; }
+.h-scroll-track > * { scroll-snap-align: start; flex-shrink: 0; }
+
+/* Service number cards (BanegaBrand style) */
+.service-num-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-num-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px rgba(7, 87, 157, 0.15);
+}
+
+.service-num-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(7, 140, 203, 0.05) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.service-num-card:hover::before { opacity: 1; }
+
+/* Testimonial carousel */
+.testimonial-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active dot */
+.carousel-dot-active {
+  width: 24px;
+  background-color: #078CCB;
+}
+
+/* Cursor dot effect (LaunchVeda style) */
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #078CCB;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s ease;
+  mix-blend-mode: multiply;
+}
+
+/* Section connector line */
+.section-divider {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, #DCEAF3, transparent);
+  margin: 0 auto;
+}
+
+/* Big number background text (LaunchVeda watermark style) */
+.watermark-text {
+  font-size: clamp(80px, 12vw, 180px);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  color: rgba(7, 87, 157, 0.04);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 1;
+}
+
+/* Pinned scroll section */
+.pin-container {
+  position: relative;
+}
+
+/* GSAP split text characters */
+.char {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.char-inner {
+  display: inline-block;
+  transform: translateY(100%);
+}
+
+/* Testimonial slider arrows */
+.slider-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #DCEAF3;
+  background: white;
+  color: #07579D;
+}
+
+.slider-btn:hover {
+  background: #07579D;
+  color: white;
+  border-color: #07579D;
+  transform: scale(1.05);
+}
+
+/* Orbit path */
+.orbit-path {
+  animation: orbit-spin 15s linear infinite;
+  transform-origin: center;
+}
+
+.orbit-path-reverse {
+  animation: orbit-spin 22s linear infinite reverse;
+  transform-origin: center;
+}
+
+/* Hover glow button */
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(7, 140, 203, 0.4);
+}
+
+/* Progress bar animation */
+@keyframes progress-fill {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+.progress-bar {
+  animation: progress-fill 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Rotating badge */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-slow { animation: spin-slow 20s linear infinite; }
+
+/* Number ticker */
+@keyframes ticker-slide {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}

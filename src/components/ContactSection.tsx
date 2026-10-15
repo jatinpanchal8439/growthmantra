@@ -16,15 +16,17 @@ import {
   DollarSign
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { ContactFormData } from '../types';
+import { ContactFormData, AppPage } from '../types';
 
 interface ContactSectionProps {
   onOpenBooking?: () => void;
+  onNavigate?: (page: AppPage) => void;
   isStandalonePage?: boolean;
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({ 
   onOpenBooking,
+  onNavigate,
   isStandalonePage = false 
 }) => {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -457,6 +459,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     </>
                   )}
                 </button>
+
+                <p className="text-[11px] text-center text-[#8295A8] mt-3">
+                  🔒 We respect your confidentiality. Your data is protected under our{' '}
+                  <button
+                    type="button"
+                    onClick={() => onNavigate ? onNavigate('privacy-policy') : undefined}
+                    className="text-[#078CCB] font-semibold hover:underline cursor-pointer"
+                  >
+                    Privacy Policy
+                  </button>
+                  . Never shared or sold.
+                </p>
               </div>
 
             </form>

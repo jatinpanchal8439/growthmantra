@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
-  Calendar, 
-  Clock, 
-  CheckCircle2, 
-  Sparkles, 
+  Send, 
   User, 
   Mail, 
   Building2, 
-  ArrowRight,
-  ShieldCheck,
-  Download,
-  Phone,
-  MessageSquare
+  Phone, 
+  MessageSquare, 
+  CheckCircle2, 
+  Sparkles,
+  Layers,
+  DollarSign
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -22,48 +20,82 @@ interface BookingModalProps {
 }
 
 export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) => {
-  const [step, setStep] = useState<'datetime' | 'details' | 'confirmed'>('datetime');
-  const [selectedDate, setSelectedDate] = useState<string>('Tomorrow at 3:00 PM IST');
+  const [step, setStep] = useState<'form' | 'confirmed'>('form');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
+    phone: '',
     email: '',
     company: '',
-    phone: '',
-    budget: '₹25,000 – ₹50,000 / mo',
-    goals: 'Scale profitable ROAS, build high-speed website & drive high-intent leads'
+    service: 'Website Design & Development',
+    budget: '₹25,000 – ₹50,000',
+    message: ''
   });
 
-  const availableSlots = [
-    'Tomorrow at 11:30 AM IST',
-    'Tomorrow at 3:00 PM IST',
-    'Tomorrow at 5:30 PM IST',
-    'Wednesday at 11:00 AM IST',
-    'Wednesday at 4:00 PM IST',
-    'Thursday at 2:30 PM IST',
-    'Friday at 12:00 PM IST',
+  const servicesList = [
+    'Website Design & Development',
+    'Shopify / eCommerce Store Development',
+    'WordPress Development',
+    'Google Ads (Search & PMax)',
+    'Meta Ads (Facebook & Instagram)',
+    'SEO (Search Engine Optimization)',
+    'Social Media Marketing & Viral Reels',
+    'Branding & Creative Design',
+    'Full-Stack Performance Marketing'
   ];
+
+  const budgetRanges = [
+    'Under ₹10,000',
+    '₹10,000 – ₹25,000',
+    '₹25,000 – ₹50,000',
+    '₹50,000 – ₹1,00,000',
+    '₹1,00,000 – ₹2,00,000',
+    '₹2,00,000+'
+  ];
+
+  // Reset to form step when modal reopens
+  useEffect(() => {
+    if (isOpen) {
+      setStep('form');
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      await fetch('/api/contact', {
+      let res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           full_name: formData.name,
-          email: formData.email,
           phone: formData.phone,
+          email: formData.email,
           company: formData.company,
-          service: '1-on-1 Growth Strategy Session',
+          service: formData.service,
           budget: formData.budget,
-          message: `Slot: ${selectedDate} | Goals: ${formData.goals}`
+          message: formData.message || 'Direct enquiry submission'
         })
       });
+
+      if (!res.ok && res.status === 404) {
+        await fetch('/send-mail.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: formData.name,
+            phone: formData.phone,
+            email: formData.email,
+            company: formData.company,
+            service: formData.service,
+            budget: formData.budget,
+            message: formData.message || 'Direct enquiry submission'
+          })
+        });
+      }
     } catch (err) {
-      console.warn('Booking log fallback');
+      console.warn('Booking form fallback');
     }
 
     setIsSubmitting(false);
@@ -82,21 +114,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-[#031A3D]/70 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-2xl bg-white border border-[#DCEAF3] rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-[#031A3D]/75 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-xl bg-white border border-[#DCEAF3] rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 my-8">
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#DCEAF3] pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#EAF5FB] text-[#07579D] border border-[#078CCB]/30">
-              <Calendar className="w-5 h-5" />
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#07579D] to-[#078CCB] text-white shadow-md shadow-[#078CCB]/25">
+              <MessageSquare className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-display text-xl sm:text-2xl font-bold text-[#031A3D]">
-                Book 1-on-1 Growth Strategy Session
+              <h3 className="font-display text-lg sm:text-xl font-bold text-[#031A3D]">
+                Send Us a Message
               </h3>
-              <p className="text-xs text-[#8295A8]">
-                30-Minute Growth Blueprint Review with our Senior Performance Director
+              <p className="text-xs text-[#64748B]">
+                Fill out the form below. Our team will contact you shortly.
               </p>
             </div>
           </div>
@@ -109,72 +141,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
           </button>
         </div>
 
-        {/* STEP 1: DATE & TIME */}
-        {step === 'datetime' && (
-          <div className="space-y-6">
-            <div className="p-4 rounded-2xl bg-[#F5FAFD] border border-[#DCEAF3] flex items-center gap-3 text-xs text-[#475569]">
-              <ShieldCheck className="w-5 h-5 text-[#078CCB] flex-shrink-0" />
-              <span>We limit new client intake to 3 brands per month to guarantee dedicated senior partner attention and high ROAS.</span>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#031A3D] mb-3">
-                Select Strategy Session Slot (IST)
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {availableSlots.map((slot, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setSelectedDate(slot)}
-                    className={`p-3.5 rounded-xl text-left text-xs font-semibold transition-all border flex items-center justify-between cursor-pointer ${
-                      selectedDate === slot
-                        ? 'bg-[#EAF5FB] border-[#078CCB] text-[#07579D] shadow-sm'
-                        : 'bg-[#F5FAFD] border-[#DCEAF3] text-[#475569] hover:border-[#078CCB]/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-[#078CCB]" />
-                      <span>{slot}</span>
-                    </div>
-                    {selectedDate === slot && (
-                      <CheckCircle2 className="w-4 h-4 text-[#078CCB]" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-[#DCEAF3] flex justify-end">
-              <button
-                type="button"
-                onClick={() => setStep('details')}
-                className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#07579D] via-[#078CCB] to-[#09B5E5] hover:brightness-110 text-white font-bold text-xs shadow-lg shadow-[#078CCB]/25 flex items-center gap-2 cursor-pointer transition-all"
-              >
-                <span>Continue to Brand Details</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 2: DETAILS */}
-        {step === 'details' && (
+        {/* DIRECT CONTACT FORM */}
+        {step === 'form' && (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="p-3 rounded-xl bg-[#EAF5FB] border border-[#078CCB]/30 text-xs text-[#07579D] flex items-center justify-between">
-              <span>Selected Slot: <strong>{selectedDate}</strong></span>
-              <button
-                type="button"
-                onClick={() => setStep('datetime')}
-                className="text-[11px] underline hover:text-[#031A3D] cursor-pointer"
-              >
-                Change
-              </button>
-            </div>
-
+            
+            {/* Row 1: Full Name & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
-                <label className="block text-xs font-semibold text-[#031A3D] mb-1">Your Full Name <span className="text-rose-500">*</span></label>
+                <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                  Full Name <span className="text-rose-500">*</span>
+                </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -182,45 +158,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Rahul Sharma"
-                    className="w-full pl-9 pr-3 py-2 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white"
+                    placeholder="e.g. Rahul Sharma"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#031A3D] mb-1">Work Email <span className="text-rose-500">*</span></label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="rahul@company.com"
-                    className="w-full pl-9 pr-3 py-2 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div>
-                <label className="block text-xs font-semibold text-[#031A3D] mb-1">Company / Brand Name</label>
-                <div className="relative">
-                  <Building2 className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    placeholder="Lumina Apparel"
-                    className="w-full pl-9 pr-3 py-2 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#031A3D] mb-1">Phone / WhatsApp <span className="text-rose-500">*</span></label>
+                <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                  Phone / WhatsApp <span className="text-rose-500">*</span>
+                </label>
                 <div className="relative">
                   <Phone className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -229,57 +176,123 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full pl-9 pr-3 py-2 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white transition-colors"
                   />
                 </div>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-[#031A3D] mb-1">Estimated Monthly Marketing Budget (INR ₹)</label>
-              <select
-                value={formData.budget}
-                onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                className="w-full px-3 py-2 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white cursor-pointer font-medium"
-              >
-                <option value="Under ₹15,000 / mo">Under ₹15,000 / mo (Starter Website / Local SEO)</option>
-                <option value="₹15,000 – ₹35,000 / mo">₹15,000 – ₹35,000 / mo (Starter Growth Plan)</option>
-                <option value="₹35,000 – ₹75,000 / mo">₹35,000 – ₹75,000 / mo (Standard Scale Plan)</option>
-                <option value="₹75,000 – ₹2,00,000 / mo">₹75,000 – ₹2,00,000 / mo (Enterprise Omnichannel)</option>
-                <option value="₹2,00,000+ / mo">₹2,00,000+ / mo (High Volume D2C & Global)</option>
-              </select>
+            {/* Row 2: Email & Company */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                  Work Email <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="rahul@company.com"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                  Company / Brand Name
+                </label>
+                <div className="relative">
+                  <Building2 className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    placeholder="e.g. Lumina Apparel"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white transition-colors"
+                  />
+                </div>
+              </div>
             </div>
 
+            {/* Row 3: Service & Budget */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                  Service Required
+                </label>
+                <div className="relative">
+                  <Layers className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <select
+                    value={formData.service}
+                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                    className="w-full pl-9 pr-3 py-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white cursor-pointer font-medium"
+                  >
+                    {servicesList.map((srv, idx) => (
+                      <option key={idx} value={srv}>{srv}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                  Estimated Budget
+                </label>
+                <div className="relative">
+                  <DollarSign className="w-4 h-4 text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <select
+                    value={formData.budget}
+                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                    className="w-full pl-9 pr-3 py-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white cursor-pointer font-medium"
+                  >
+                    {budgetRanges.map((bgt, idx) => (
+                      <option key={idx} value={bgt}>{bgt}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 4: Message */}
             <div>
-              <label className="block text-xs font-semibold text-[#031A3D] mb-1">Primary Growth Focus / Challenges</label>
+              <label className="block text-xs font-bold text-[#031A3D] mb-1">
+                Your Message / Requirements
+              </label>
               <textarea
-                rows={2}
-                value={formData.goals}
-                onChange={(e) => setFormData({ ...formData, goals: e.target.value })}
-                className="w-full p-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white"
+                rows={3}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Share your business requirements or any questions you have..."
+                className="w-full p-2.5 bg-[#F5FAFD] border border-[#DCEAF3] rounded-xl text-[#031A3D] text-xs focus:outline-none focus:border-[#078CCB] focus:bg-white transition-colors"
               />
             </div>
 
-            <div className="pt-3 border-t border-[#DCEAF3] flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => setStep('datetime')}
-                className="text-xs text-[#8295A8] hover:text-[#031A3D] cursor-pointer"
+            <div className="pt-3 border-t border-[#DCEAF3] flex items-center justify-between gap-3">
+              <a
+                href={`https://wa.me/918505866668?text=${encodeURIComponent('Hello Groowth Mantra, I want to discuss a project.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-[#25D366] hover:text-[#1da851] font-bold flex items-center gap-1.5 transition-colors"
               >
-                Back
-              </button>
+                <MessageSquare className="w-3.5 h-3.5 fill-current" />
+                <span>Chat on WhatsApp</span>
+              </a>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#07579D] via-[#078CCB] to-[#09B5E5] hover:brightness-110 text-white font-bold text-xs shadow-lg shadow-[#078CCB]/25 flex items-center gap-2 cursor-pointer transition-all disabled:opacity-60"
+                className="py-2.5 px-6 rounded-xl bg-gradient-to-r from-[#07579D] via-[#078CCB] to-[#09B5E5] hover:brightness-110 text-white font-bold text-xs shadow-lg shadow-[#078CCB]/25 flex items-center gap-2 cursor-pointer transition-all disabled:opacity-60"
               >
                 {isSubmitting ? (
-                  <span>Scheduling Call...</span>
+                  <span>Sending Message...</span>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 text-white" />
-                    <span>Confirm Strategy Session</span>
+                    <Send className="w-3.5 h-3.5 text-white" />
+                    <span>Send Message</span>
                   </>
                 )}
               </button>
@@ -287,7 +300,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
           </form>
         )}
 
-        {/* STEP 3: CONFIRMED */}
+        {/* STEP 2: CONFIRMED */}
         {step === 'confirmed' && (
           <div className="text-center py-6 space-y-5 animate-fade-in">
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
@@ -296,41 +309,29 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose }) =
 
             <div className="space-y-2">
               <h4 className="font-display text-2xl font-bold text-[#031A3D]">
-                Strategy Session Confirmed!
+                Message Sent Successfully!
               </h4>
               <p className="text-xs sm:text-sm text-[#475569] max-w-md mx-auto">
-                We've sent the Google Meet invite to <strong>{formData.email || 'your email'}</strong> for <strong>{selectedDate}</strong>.
+                Thank you, <strong>{formData.name || 'there'}</strong>! We have received your inquiry. Our team will get in touch with you at <strong>{formData.phone || formData.email}</strong> shortly.
               </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-[#F5FAFD] border border-[#DCEAF3] max-w-md mx-auto text-left space-y-2 text-xs text-[#475569]">
-              <div className="font-bold text-[#031A3D] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#078CCB]" />
-                <span>What happens next:</span>
-              </div>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Our senior strategist will conduct a pre-call analysis of your ad accounts and website.</li>
-                <li>You will receive a custom 90-day scaling framework during the call.</li>
-                <li>Questions beforehand? Message us directly on WhatsApp.</li>
-              </ul>
             </div>
 
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
-                href={`https://wa.me/918505866668?text=${encodeURIComponent(`Hello Groowth Mantra, I just booked a strategy session for ${selectedDate}. Name: ${formData.name}.`)}`}
+                href={`https://wa.me/918505866668?text=${encodeURIComponent(`Hello Groowth Mantra, I just submitted an inquiry. Name: ${formData.name}, Phone: ${formData.phone}, Service: ${formData.service}.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto py-2.5 px-5 rounded-xl bg-[#25D366] text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors"
               >
                 <MessageSquare className="w-4 h-4 fill-current" />
-                <span>Notify via WhatsApp</span>
+                <span>Fast-Track on WhatsApp</span>
               </a>
 
               <button
                 onClick={onClose}
                 className="w-full sm:w-auto py-2.5 px-6 rounded-xl bg-[#07579D] text-white font-bold text-xs hover:bg-[#031A3D] transition-colors cursor-pointer"
               >
-                Close & Return
+                Close
               </button>
             </div>
           </div>

@@ -347,6 +347,17 @@ export const Header: React.FC<HeaderProps> = ({
                 <PhoneCall className="w-4 h-4" />
                 <span>Get Free Consultation</span>
               </button>
+              <div className="text-center pt-1">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onNavigate('privacy-policy');
+                  }}
+                  className="text-[11px] text-[#8295A8] hover:text-[#07579D] transition-colors cursor-pointer"
+                >
+                  Privacy Policy & DPDP Compliance
+                </button>
+              </div>
             </div>
           </div>
         </div>

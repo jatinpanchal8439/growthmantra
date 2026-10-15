@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Lenis from 'lenis';
+
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ClientDossierShowcase } from './components/ClientDossierShowcase';
@@ -18,6 +20,8 @@ import { WebsitesShowcaseView } from './components/WebsitesShowcaseView';
 import { SocialMediaInstagramHub } from './components/SocialMediaInstagramHub';
 import { EventsAwardShowsView } from './components/EventsAwardShowsView';
 import { GSAPTeaserSection } from './components/GSAPTeaserSection';
+import { CategoryConsultationBanner } from './components/CategoryConsultationBanner';
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { AppPage } from './types';
 import { 
   PhoneCall, 
@@ -43,6 +47,26 @@ export default function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isClientPortalModalOpen, setIsClientPortalModalOpen] = useState(false);
   const [selectedClientIdForDossier, setSelectedClientIdForDossier] = useState<string | null>(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    let animationFrameId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+    animationFrameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+    };
+  }, []);
 
   const [auditInitialData, setAuditInitialData] = useState<{
     url?: string;
@@ -116,6 +140,17 @@ export default function App() {
               />
             </div>
 
+            {/* About Groowth Mantra Section */}
+            <div id="about">
+              <AboutSection
+                onOpenBooking={() => setIsBookingModalOpen(true)}
+                onOpenAudit={() => {
+                  setAuditInitialData({});
+                  setIsAuditModalOpen(true);
+                }}
+              />
+            </div>
+
             {/* 7. Transparent Pricing Plans */}
             <div id="pricing-section">
               <PricingSection
@@ -136,9 +171,9 @@ export default function App() {
               />
             </div>
 
-            {/* 11. Full Contact & Map Section */}
-            <div id="contact-home">
-              <ContactSection
+            {/* Category Consultation Banner (In place of Contact Us on Main Page) */}
+            <div id="consultation">
+              <CategoryConsultationBanner
                 onOpenBooking={() => setIsBookingModalOpen(true)}
               />
             </div>
@@ -179,6 +214,7 @@ export default function App() {
 
             <ContactSection
               onOpenBooking={() => setIsBookingModalOpen(true)}
+              onNavigate={handleNavigate}
             />
           </div>
         )}
@@ -216,6 +252,7 @@ export default function App() {
 
             <ContactSection
               onOpenBooking={() => setIsBookingModalOpen(true)}
+              onNavigate={handleNavigate}
             />
           </div>
         )}
@@ -338,6 +375,7 @@ export default function App() {
 
             <ContactSection
               onOpenBooking={() => setIsBookingModalOpen(true)}
+              onNavigate={handleNavigate}
             />
           </div>
         )}
@@ -358,6 +396,7 @@ export default function App() {
 
             <ContactSection
               onOpenBooking={() => setIsBookingModalOpen(true)}
+              onNavigate={handleNavigate}
               isStandalonePage={true}
             />
           </div>
@@ -382,6 +421,14 @@ export default function App() {
               onOpenBooking={() => setIsBookingModalOpen(true)}
             />
           </div>
+        )}
+
+        {/* Page 12: PRIVACY POLICY & DATA PROTECTION */}
+        {currentPage === 'privacy-policy' && (
+          <PrivacyPolicyPage
+            onNavigate={handleNavigate}
+            onOpenBooking={() => setIsBookingModalOpen(true)}
+          />
         )}
 
       </main>
